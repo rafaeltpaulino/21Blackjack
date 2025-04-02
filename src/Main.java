@@ -2,83 +2,119 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        Game game = new Game();
 
-        var baralho = new Deck(); //Cria o baralho
+        game.startGame();
+        game.showPlayer1Hand();
+        game.showPlayer2Hand();
+        game.showHouseHand2();
 
-        var card1 = baralho.drawcard(); //Cria os cards iniciais da mão do jogador
-        var card2 = baralho.drawcard();
+        System.out.println("Jogador 1 deseja continuar? (S/N)");
 
-        System.out.printf("Sua mão: " + card1.toString() + " e " + card2.toString());
+        Scanner scanner = new Scanner(System.in);
 
-        System.out.println("\n");
+        String c = scanner.next();
 
-        var card3 = baralho.drawcard(); //Cria os cards iniciais da mão da casa
-        var card4 = baralho.drawcard();
+        while(c.equals("S") || c.equals("s")) { //Vez do jogador 1
+            System.out.println("\n-----Jogador 1 comprou-----\n");
+            game.playerDraw(game.getPlayer1()); //Compra um card
+            game.playerHandValue(game.getPlayer1()); //Atualiza o valor da mão do jogador
+            game.showPlayer1Hand(); //Mostra a mão do jogador
 
-        System.out.println("Mão da casa: " + card3.toString() + " e " + "???");
+            if(game.playerHandValue(game.getPlayer1()) > 21) {
+                System.out.println("\n-----A mao do jogador 1 estourou e ele perdeu! Que pena!-----\n");
+                break;
+            } else if (game.playerHandValue(game.getPlayer1()) == 21) {
+                System.out.println("\n-----21! Que sorte hein!-----\n");
+                break;
+            } else {
+                System.out.println("Jogador 1 deseja continuar? (S/N)");
+                c = scanner.next();
+            }
+        }
 
-        System.out.println("\n");
-
-        int vj = card1.getRank().getRankValue() + card2.getRank().getRankValue(); //pega o valor da mao do jogador
-        int vc = card3.getRank().getRankValue() + card4.getRank().getRankValue(); //pega o valor da mao da casa
-
-        System.out.println("Valor da sua mão: " + vj + "\n");
-
-        System.out.println("Deseja continuar ou parar? (C para continuar / P para parar) ");
-
-        Scanner scanner = new Scanner(System.in); //Scanner e string para pegar o input do jogador
-        String c;
+        System.out.println("\n-----Vez do Jogador 2-----\n");
+        game.showPlayer2Hand();
+        System.out.println("Jogador 2 deseja continuar? (S/N)");
         c = scanner.next();
 
-        while(!c.equals("C") && !c.equals("c") && !c.equals("P") && !c.equals("p")) { //Caso o jogador escolha uma opção inválida
-            System.out.println("Opção inválida.");
-            System.out.println("Deseja continuar ou parar? (C para continuar / P para parar) ");
-            c = scanner.next();
+        while(c.equals("S") || c.equals("s")) { //Vez do jogador 2
+            System.out.println("\n-----Jogador 2 comprou-----\n");
+            game.playerDraw(game.getPlayer2());
+            game.playerHandValue(game.getPlayer2());
+            game.showPlayer2Hand();
+
+            if(game.playerHandValue(game.getPlayer2()) > 21) {
+                System.out.println("\n-----A mao do jogador 2 estourou e ele perdeu! Que pena!-----\n");
+                break;
+            } else if (game.playerHandValue(game.getPlayer2()) == 21) {
+                System.out.println("\n-----21! Que sorte hein-----\n");
+                break;
+            } else {
+                System.out.println("Jogador 2 deseja continuar? (S/N)");
+                c = scanner.next();
+            }
         }
 
-        while(c.equals("C") || c.equals("c")) { //Se o jogador quiser continuar, entra em um loop até estourar a mão ou até que o jogador queira parar
-            var card5 = baralho.drawcard();
-            System.out.printf("\n" + "Você comprou: " + card5.toString() + "\n");
-            vj += card5.getRank().getRankValue(); //pega o valor atualizado da mao do jogador
-            System.out.println("Valor da sua mão: " + vj);
-            System.out.println("\n");
-            if(vj>21) {
-                System.out.println("Estourou! Perdeu tudo marreco!");
-                return;
-            }
-            if(vj == 21) {
-                System.out.println("21! Parabéns! Você ganhou!");
-                return;
-            }
-            System.out.println("Deseja continuar ou parar? (C para continuar / P para parar) ");
-            c = scanner.next();
+        if((game.playerHandValue(game.getPlayer1()) > 21) && (game.playerHandValue(game.getPlayer2()) > 21)) {
+            System.out.println("\n-----As mãos dos dois jogadores estouraram e eles perderam!-----\n");
+            return;
         }
-        if(c.equals("P") || c.equals("p")) {
-            System.out.println("\n" + "Mão da casa: " + card3 + " e " + card4);
-            System.out.println("Valor da mão da casa: " + vc + "\n");
 
-            if(vj<vc) { //Se a casa tiver uma mão maior já de começo, o jogador perde e o programa é finalizado
-                System.out.println("Perdeu otario kkkjkkjkkkkk");
+        System.out.println("\n-----Ambos jogadores terminaram de jogar. Vez da Casa-----\n");
+        System.out.println(game);
+
+        while(game.playerHandValue(game.getHouse()) < 21) {
+            //Casos em que a Casa pode ganhar antes de comprar uma carta
+            if((game.playerHandValue(game.getHouse()) < 21) && (game.playerHandValue(game.getHouse()) > game.playerHandValue(game.getPlayer1())) && (game.playerHandValue(game.getHouse()) > game.playerHandValue(game.getPlayer2()))) {
+                System.out.println("\n-----A Casa venceu os dois jogadores!-----\n" + game);
                 return;
             }
 
-            while(vc<21) { //Se a mão do jogador for maior, a casa compra até vencer ou até estourar
-                var card6 = baralho.drawcard();
-                System.out.println("Casa comprou: " + card6.toString());
-                vc += card6.getRank().getRankValue();
-                System.out.println("Valor da mão da casa: " + vc + "\n");
-                if(vc>21) {
-                    System.out.println("A casa estourou! Você ganhou campeão! Parabéns!");
-                    return;
-                }
-                else if(vc>vj) {
-                    System.out.println("Perdeu otario kkkjkkjkkkkk");
-                    return;
-                }
-                else if(vc == vj) {
-                    System.out.println("Em caso de empate a casa ganha troxa kkkjkkjkkkkk");
-                    return;
-                }
+            if((game.playerHandValue(game.getHouse()) < 21) && (game.playerHandValue(game.getHouse()) >= game.playerHandValue(game.getPlayer1())) && (game.playerHandValue(game.getPlayer2()) > 21)) {
+                System.out.println("\n-----A Casa venceu os Jogador 1 enquanto a mão do Jogador 2 estourou!-----\n" + game);
+                return;
+            }
+
+            if((game.playerHandValue(game.getHouse()) < 21) && (game.playerHandValue(game.getPlayer1()) > 21) && (game.playerHandValue(game.getHouse()) >= game.playerHandValue(game.getPlayer2()))) {
+                System.out.println("\n-----A Casa venceu o jogador 2 enquanto a mão do Jogador 1 estourou!-----\n" + game);
+                return;
+            }
+
+            if((game.playerHandValue(game.getHouse()) >= game.playerHandValue(game.getPlayer1())) && (game.playerHandValue(game.getHouse()) >= game.playerHandValue(game.getPlayer2()))) {
+                System.out.println("\n-----Em caso de empate a casa vence!-----\n" + game);
+                return;
+            }
+
+            if((game.playerHandValue(game.getHouse()) == game.playerHandValue(game.getPlayer1())) && (game.playerHandValue(game.getHouse()) == game.playerHandValue(game.getPlayer2()))) {
+                System.out.println("-----EMPATE TRIPLO!!! QUAIS AS CHANCES DISSO ACONTECER? MAS A CASA VENCE NO FINAL KKKK!-----");
+                return;
+            }
+
+            System.out.println("\n-----A Casa comprou-----\n");
+            game.playerDraw(game.getHouse());
+            game.playerHandValue(game.getHouse());
+            game.showHouseHand();
+
+            //Casos que só podem acontecer depois que a casa compra pelo menos uma carta
+            if((game.playerHandValue(game.getHouse()) > 21) && (game.playerHandValue(game.getPlayer1()) <= 21) && (game.playerHandValue(game.getPlayer2()) <= 21)) {
+                System.out.println("\n-----A mão da Casa estourou! E os dois jogadores venceram!-----\n" + game);
+                return;
+            }
+
+            if((game.playerHandValue(game.getHouse()) > 21) && (game.playerHandValue(game.getPlayer1()) <= 21) && (game.playerHandValue(game.getPlayer2()) > 21)) {
+                System.out.println("\n-----A mão da Casa estourou! E o Jogador 1 venceu!-----\n" + game);
+                return;
+            }
+
+            if((game.playerHandValue(game.getHouse()) > 21) && (game.playerHandValue(game.getPlayer1()) > 21) && (game.playerHandValue(game.getPlayer2()) <= 21)) {
+                System.out.println("\n-----A mão da Casa estourou! E o Jogador 2 venceu!-----\n" + game);
+                return;
+            }
+
+            if(game.playerHandValue(game.getHouse()) == 21) {
+                System.out.println("\n-----21! A Casa venceu!-----\n" + game);
+                return;
             }
         }
     }

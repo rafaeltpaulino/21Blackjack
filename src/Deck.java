@@ -16,7 +16,7 @@ public class Deck {
         Collections.shuffle(cards);
     }
 
-    public Card drawcard() {
+    public Card drawCard() {
         return this.cards.removeLast();
     }
 
