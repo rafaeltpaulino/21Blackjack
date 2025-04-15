@@ -1,3 +1,5 @@
+package items;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -20,9 +22,13 @@ public class Deck {
         return this.cards.removeLast();
     }
 
+    public int remainingCards() {
+        return this.cards.size();
+    }
+
     @Override
     public String toString() {
-        return "Deck{" +
+        return "items.Deck{" +
                 "cards=" + cards +
                 '}';
     }

@@ -1,3 +1,5 @@
+package items;
+
 public enum Rank {
 
     KING("REI", 10), QUEEN("RAINHA", 10), JACK("VALETE", 10), TEN("DEZ", 10),

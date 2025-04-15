@@ -1,3 +1,5 @@
+package items;
+
 public enum Suit {
 
     HEARTS("COPAS"), CLUBS("PAUS"), DIAMONDS("OUROS"), SPADES("ESPADAS");
