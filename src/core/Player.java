@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player {
-    int i = 0;
     private String name;
     private List<Card> playerHand;
 
